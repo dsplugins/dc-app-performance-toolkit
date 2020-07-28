@@ -31,7 +31,7 @@ settings:
     view_kanban_board: 3
     view_backlog: 6
     browse_boards: 2
-    standalone_extension: 2
+    standalone_extension: 3
 services:
   - module: shellexec
     prepare:
