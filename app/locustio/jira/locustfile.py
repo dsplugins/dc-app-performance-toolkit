@@ -1,9 +1,9 @@
+from extension.jira.extension_locust import app_specific_action_board, app_specific_action_sprint
 from locust import HttpLocust, TaskSet, task, between
+from locustio.common_utils import ActionPercentage
 from locustio.jira.http_actions import login_and_view_dashboard, create_issue, search_jql, view_issue, \
     view_project_summary, view_dashboard, edit_issue, add_comment, browse_boards, view_kanban_board, view_scrum_board, \
     view_backlog, browse_projects
-from locustio.common_utils import ActionPercentage
-from extension.jira.extension_locust import app_specific_action
 from util.conf import JIRA_SETTINGS
 
 action = ActionPercentage(config_yml=JIRA_SETTINGS)
@@ -62,9 +62,13 @@ class JiraBehavior(TaskSet):
     def browse_boards_action(self):
         browse_boards(self)
 
-    @task(action.percentage('standalone_extension'))  # By default disabled
-    def custom_action(self):
-        app_specific_action(self)
+    @task(action.percentage('standalone_extension'))
+    def app_specific_action_board_action(self):
+        app_specific_action_board(self)
+
+    @task(action.percentage('standalone_extension'))
+    def app_specific_action_sprint_action(self):
+        app_specific_action_sprint(self)
 
 
 class JiraUser(HttpLocust):

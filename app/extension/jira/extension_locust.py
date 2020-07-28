@@ -1,27 +1,35 @@
-import re
+import random
+
 from locustio.common_utils import init_logger, jira_measure
+from locustio.jira.requests_params import jira_datasets
+
+jira_dataset = jira_datasets()
 
 logger = init_logger(app_type='jira')
 
 
 @jira_measure
-def app_specific_action(locust):
-    r = locust.client.get('/plugin/report')  # navigate to page
+def app_specific_action_board(locust):
+    scrum_board_id = random.choice(jira_dataset["scrum_boards"])[0]
 
-    content = r.content.decode('utf-8')  # parse page content
-    token_pattern_example = '"token":"(.+?)"'
-    id_pattern_example = '"id":"(.+?)"'
-    token = re.findall(token_pattern_example, content)  # parse variables from response using regexp
-    id = re.findall(id_pattern_example, content)
-    logger.locust_info(f'token: {token}, id: {id}')  # logger for debug when verbose is true in jira.yml file
-    if 'assertion string' not in content:
-        logger.error(f"'assertion string' was not found in {content}")
-    assert 'assertion string' in content  # assertion after GET request
+    response = locust.client.get(f'/rest/com.dsplugins.estimator/1.0/calculate/board/{scrum_board_id}', catch_response=True)
+    assert response.status_code == 200
 
-    body = {"id": id, "token": token}  # include parsed variables to POST body
-    headers = {'content-type': 'application/json'}
-    r = locust.client.post('/plugin/post/endpoint', body, headers)  # send some POST request
-    content = r.content.decode('utf-8')
-    if 'assertion string after successful post request' not in content:
-        logger.error(f"'assertion string after successful post request' was not found in {content}")
-    assert 'assertion string after successful post request' in content  # assertion after POST request
+    issue_id = random.choice(jira_dataset['issues'])[1]
+
+    response = locust.client.put(f'/rest/com.dsplugins.estimator/1.0/estimate/estimated/{issue_id}', "3", catch_response=True)
+    assert response.status_code == 200
+
+
+@jira_measure
+def app_specific_action_sprint(locust):
+    sprint = random.choice(jira_dataset["sprints"])
+    sprint_id = sprint[0]
+
+    response = locust.client.get(f'/rest/com.dsplugins.estimator/1.0/calculate/sprint/{sprint_id}', catch_response=True)
+    assert response.status_code == 200
+
+    issue_id = random.choice(jira_dataset['issues'])[1]
+
+    response = locust.client.put(f'/rest/com.dsplugins.estimator/1.0/estimate/estimated/{issue_id}', "3", catch_response=True)
+    assert response.status_code == 200

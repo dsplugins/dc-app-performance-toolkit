@@ -44,7 +44,7 @@ class JiraRestClient(RestClient):
 
         return boards_list
 
-    def get_sprints(self, board_id, start_at=0, max_results=100, state='active'):
+    def get_sprints(self, board_id, start_at=0, max_results=100, state='active,future'):
         api_url = f"{self.host}/rest/agile/1.0/board/{board_id}/sprint" \
                   f"?startAt={start_at}&maxResults={max_results}&state={state}"
         response = self.get(api_url, f"Could not sprints for board id {board_id}")

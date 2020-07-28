@@ -62,9 +62,14 @@ Refer to `app/selenium_ui/jira/modules.py` for examples.
 """
 
 
-def test_1_selenium_custom_action(webdriver, jira_datasets, jira_screen_shots):
-    extension_ui.app_specific_action(webdriver, jira_datasets)
+def test_1_selenium_view_sprint_estimator_action(webdriver, jira_datasets, jira_screen_shots):
+    extension_ui.view_sprint_estimator(webdriver, jira_datasets)
 
+def test_1_selenium_view_board_estimator_action(webdriver, jira_datasets, jira_screen_shots):
+    extension_ui.view_board_estimator(webdriver, jira_datasets)
+
+def test_1_selenium_view_estimator_settings_action(webdriver, jira_datasets, jira_screen_shots):
+    extension_ui.view_estimator_settings(webdriver, jira_datasets)
 
 # this action should be the last one
 def test_2_selenium_z_log_out(webdriver, jira_datasets, jira_screen_shots):
